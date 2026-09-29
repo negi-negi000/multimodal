@@ -215,25 +215,24 @@ class TextAnalyzer:
           self.score = llm_score_data.get("score", 80)
 
           prompt_advice_template = """
-                                    [Role]
-                                    {mode_instruction}
-                                    [Instruction]
-                                    発言者の「発言テキスト」および「分析された統合感情データ」に基づき、相手の状況・心境に寄り添った最適なアドバイスを生成してください。
-                                    プロンプト外の解説やMarkdown表記は含めず、指定のJSONフォーマットでのみ出力してください。
-                                    [Input Data]
-                                    発言: 「{text}」
-                                    状況スコア: {score}/100点
-                                    主たる感情状態: Fear={fear}, Sadness={sadness}, Anger={anger}, Neutral={neutral}
-                                    [Advice Guidelines]
-                                    - 発言に含まれる具体的な単語・キーワードに直接触れ、抽象的な慰め（「周りに相談しよう」等）は避けること。
-                                    - スコアが低い場合: 具体的な事象（例: SSD、遅延等）に対する対処や整理を促す。
-                                    - スコアが高い場合: 取り組みを肯定し、継続を促す。
-                                    [Constraints]
-                                    1. advice は必ず 40文字以内 とすること。
-                                    [JSON Schema]
-                                    {{
+                                [Role]
+                                {mode_instruction}
+                                [Instruction]
+                                発言者の「発言テキスト」および「分析された統合感情データ」に基づき、相手の状況・心境に寄り添った最適なアドバイスを生成してください。
+                                プロンプト外の解説やMarkdown表記は含めず、指定のJSONフォーマットでのみ出力してください。
+                                [Input Data]
+                                発言: 「{text}」
+                                状況スコア: {integrated_score} / 100 点
+                                主たる感情状態: Fear={integrated_fear}, Sadness={integrated_sadness}, Neutral={integrated_neutral}
+                                [Advice Guidelines]
+                                  - スコアが低い（無理・焦りがある）場合：一人で抱え込ませず、具体策の整理や周囲への相談を促す優しいサポートを行う。
+                                  - スコアが高い（安定している）場合：取り組みを肯定し、継続を促すコメントを行う。
+                                [Constraints]
+                                  1. advice は必ず 50文字以内 とすること。
+                                [JSON Schema]
+                                  {{
                                     "advice": string
-                                    }}"""
+                                  }}"""
 
           prompt_advice = prompt_advice_template.format(
               mode_instruction=mode_instruction,
